@@ -92,20 +92,26 @@ describe 'Norm.Adapters.PostgresAdapter', ->
   describe '#insert', ->
     it 'returns a query with one attribute', ->
       instance =
-        tableName: 'people'
         attributes:
           first_name: 'Jim'
-      actual = adapter.insert(instance)
+      actual = adapter.insert('people', instance)
       expect(actual).toEqual("INSERT INTO people (first_name) VALUES ('Jim') RETURNING *;")
 
     it 'returns a query with multiple attributes', ->
       instance =
-        tableName: 'people'
         attributes:
           first_name: 'Jim'
           last_name:  'Drannbauer'
-      actual = adapter.insert(instance)
+      actual = adapter.insert('people', instance)
       expect(actual).toEqual("INSERT INTO people (first_name,last_name) VALUES ('Jim','Drannbauer') RETURNING *;")
+
+    it 'returns a query with multiple attributes and multiple rows', ->
+      instances = [
+        { attributes: { first_name: 'Jim',   last_name:  'Drannbauer' } }
+        { attributes: { first_name: 'Kerry', last_name:  'Drannbauer' } }
+      ]
+      actual = adapter.insert('people', instances)
+      expect(actual).toEqual("INSERT INTO people (first_name,last_name) VALUES ('Jim','Drannbauer'),('Kerry','Drannbauer') RETURNING *;")
 
   describe '#update', ->
     it 'returns a query with one set option', ->

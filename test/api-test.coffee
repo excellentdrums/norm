@@ -85,6 +85,43 @@ suite.addBatch
         return
 
 .addBatch
+  'Model.create multiple models':
+    topic: ->
+      people = [
+        { first_name: 'Kerry', last_name: 'Drannbauer' }
+        { first_name: 'Jim',   last_name: 'Drannbauer' }
+      ]
+
+      Person.create people, @.callback; return
+
+    'creates and returns an array of model instances': (err, people) ->
+      assert.instanceOf people, Array
+
+    'sets the given properties on each of the created model instances': (err, people) ->
+      assert.equal people[0].get('first_name'), 'Kerry'
+      assert.equal people[0].get('last_name'), 'Drannbauer'
+      assert.equal people[1].get('first_name'), 'Jim'
+      assert.equal people[1].get('last_name'), 'Drannbauer'
+
+    'sets the id property on the created model instances': (err, people) ->
+      assert.isNotNull people[0].get('id')
+      assert.isNotNull people[1].get('id')
+
+    'sets the other properties on the created model instances to null': (err, people) ->
+      assert.isNull people[0].get('middle_name')
+      assert.isNull people[0].get('age')
+      assert.isNull people[1].get('middle_name')
+      assert.isNull people[1].get('age')
+
+    'leaves unknown properties of the created model instances undefined': (err, people) ->
+      assert.isUndefined people[0].get('blarg')
+      assert.isUndefined people[1].get('blarg')
+
+    teardown: ->
+      Person.deleteAll (err, result) ->
+        return
+
+.addBatch
   'Model.find':
     topic: ->
       options =

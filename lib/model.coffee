@@ -34,8 +34,18 @@ class Model
         @.init attributes, callback
 
   @create: (attributes, callback) ->
-    instance = new @(attributes)
-    instance.save callback
+    attributes = [attributes] unless attributes instanceof Array
+    instances = _(attributes).map (attribute) =>
+      new @ attribute
+
+    @.connection.emit 'insert', this, instances, (err, result) =>
+      if result.rowCount > 1
+        instances = _(result.rows).map (attributes) =>
+          new @ attributes
+        callback err, instances
+      else
+        instance = new @ result.rows[0]
+        callback err, instance
 
   @deleteAll: (options, callback) ->
     if typeof options is 'function'
@@ -88,15 +98,8 @@ class Model
       else
         callback err, null
 
-  @paginate: (options, callback) ->
-    if typeof options is 'function'
-      callback = options
-      options  = {}
-    options = _({ limit: 10, order: 'id ASC', offset: 0 }).extend options
-    @.all options, callback
-
   save: (callback) ->
-    @.constructor.connection.emit 'insert', @, (err, result) =>
+    @.constructor.connection.emit 'insert', @.constructor, @, (err, result) =>
       @.set result.rows[0]
       callback err, @
 

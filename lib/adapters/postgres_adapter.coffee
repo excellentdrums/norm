@@ -5,11 +5,27 @@ class Statement
     _(@parts).compact().join(' ') + ';'
 
 class PostgresAdapter
-  insert: (instance) ->
+  insert: (tableName, instances) ->
+    instances = [instances] unless instances instanceof Array
+
+    fields = _(instances).chain()
+      .map (instance) ->
+        _(instance.attributes).keys()
+      .flatten()
+      .unique()
+      .value()
+
+    values = _(instances).chain()
+      .map (instance) ->
+        _(fields)
+          .map (field) ->
+            instance.attributes[field]
+      .value()
+
     new Statement(
-      this._insertInto instance.tableName
-      this._fields     instance.attributes
-      this._values     instance.attributes
+      this._insertInto tableName
+      this._fields     fields
+      this._values     values
       this._returning  '*'
     ).toString()
 
@@ -71,18 +87,16 @@ class PostgresAdapter
   _insertInto: (tableName) ->
     'INSERT INTO ' + tableName
 
-  _fields: (attributes) ->
-      '(' + _.keys(attributes).join(',') + ')'
+  _fields: (fields) ->
+    '(' + fields + ')'
 
-  _values: (attributes) ->
-    values = _(attributes).chain()
-      .keys()
-      .map((key) ->
-        "'" + attributes[key] + "'")
-      .join(',')
-      .value()
+  _values: (values) ->
+    rows = _(values).map (row) ->
+      quoted = _(row).map (value) ->
+        "'" + value + "'"
+      '(' + quoted + ')'
 
-    'VALUES (' + values + ')'
+    'VALUES ' + rows
 
   _returning: (returning) ->
     'RETURNING ' + returning if returning

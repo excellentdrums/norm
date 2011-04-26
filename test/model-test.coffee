@@ -17,7 +17,7 @@ Norm.connect(connectionParams);
 class Person extends Norm.Model
   @tableName: 'people'
 
-suite = vows.describe 'Norm'
+suite = vows.describe 'Norm.Model'
 
 suite.addBatch
   'Model.tableName':
