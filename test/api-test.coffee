@@ -239,18 +239,14 @@ suite.addBatch
 .addBatch
   'Model.all with no options':
     topic: ->
-      kerry =
-        first_name: 'Kerry'
-        last_name:  'Drannbauer'
-      jim =
-        first_name: 'Jim'
-        last_name:  'Drannbauer'
+      people = [
+        { first_name: 'Kerry', last_name: 'Drannbauer' }
+        { first_name: 'Jim',   last_name: 'Drannbauer' }
+      ]
 
-      Person.create kerry, (err, person) =>
-        @.kerry = person
-
-      Person.create jim, (err, person) =>
-        @.jim = person
+      Person.create people, (err, people) =>
+        @.kerry = people[0]
+        @.jim   = people[1]
 
       Person.all @.callback; return
 
@@ -271,18 +267,14 @@ suite.addBatch
 .addBatch
   'Model.all with options':
     topic: ->
-      kerry =
-        first_name: 'Kerry'
-        last_name:  'Drannbauer'
-      jim =
-        first_name: 'Jim'
-        last_name:  'Drannbauer'
+      people = [
+        { first_name: 'Kerry', last_name: 'Drannbauer' }
+        { first_name: 'Jim',   last_name: 'Drannbauer' }
+      ]
 
-      Person.create kerry, (err, person) =>
-        @.kerry = person
-
-      Person.create jim, (err, person) =>
-        @.jim = person
+      Person.create people, (err, people) =>
+        @.kerry = people[0]
+        @.jim   = people[1]
 
       options =
         where:
@@ -306,17 +298,12 @@ suite.addBatch
 .addBatch
   'Model.count with no options':
     topic: ->
-      kerry =
-        first_name: 'Kerry'
-        last_name:  'Drannbauer'
-      jim =
-        first_name: 'Jim'
-        last_name:  'Drannbauer'
+      people = [
+        { first_name: 'Kerry', last_name: 'Drannbauer' }
+        { first_name: 'Jim',   last_name: 'Drannbauer' }
+      ]
 
-      Person.create kerry, (err, person) =>
-        return
-
-      Person.create jim, (err, person) =>
+      Person.create people, (err, people) =>
         return
 
       Person.count @.callback; return
@@ -334,17 +321,12 @@ suite.addBatch
 .addBatch
   'Model.count with options':
     topic: ->
-      kerry =
-        first_name: 'Kerry'
-        last_name:  'Drannbauer'
-      jim =
-        first_name: 'Jim'
-        last_name:  'Drannbauer'
+      people = [
+        { first_name: 'Kerry', last_name: 'Drannbauer' }
+        { first_name: 'Jim',   last_name: 'Drannbauer' }
+      ]
 
-      Person.create kerry, (err, person) =>
-        return
-
-      Person.create jim, (err, person) =>
+      Person.create people, (err, people) =>
         return
 
       options =
@@ -407,6 +389,7 @@ suite.addBatch
       options =
         first_name: 'Dylan'
         last_name:  'Drannbauer'
+
       Person.findOrCreateBy options, @.callback; return
 
     'creates and returns a model instance': (err, person) ->
@@ -458,6 +441,7 @@ suite.addBatch
       options =
         first_name: 'Dylan'
         last_name:  'Drannbauer'
+
       Person.findOrInitializeBy options, @.callback; return
 
     'initializes and returns a model instance': (err, person) ->
@@ -506,24 +490,16 @@ suite.addBatch
 .addBatch
   'Model.first with options':
     topic: ->
-      kerry =
-        first_name: 'Kerry'
-        last_name:  'Drannbauer'
-      firstJim =
-        first_name: 'Jim'
-        last_name:  'Drann'
-      secondJim =
-        first_name: 'Jim'
-        last_name:  'Bauer'
+      people = [
+        { first_name: 'Kerry', last_name: 'Drannbauer' }
+        { first_name: 'Jim',   last_name: 'Drannbauer' }
+        { first_name: 'Jim',   last_name: 'Dramboui'   }
+      ]
 
-      Person.create kerry, (err, person) =>
-        @.kerry = person
-
-      Person.create firstJim, (err, person) =>
-        @.firstJim = person
-
-      Person.create secondJim, (err, person) =>
-        @.secondJim = person
+      Person.create people, (err, people) =>
+        @.kerry     = people[0]
+        @.firstJim  = people[1]
+        @.secondJim = people[2]
 
       options =
         where:
@@ -543,18 +519,14 @@ suite.addBatch
 .addBatch
   'Model.first with no options':
     topic: ->
-      kerry =
-        first_name: 'Kerry'
-        last_name:  'Drannbauer'
-      jim =
-        first_name: 'Jim'
-        last_name:  'Drannbauer'
+      people = [
+        { first_name: 'Kerry', last_name: 'Drannbauer' }
+        { first_name: 'Jim',   last_name: 'Drannbauer' }
+      ]
 
-      Person.create kerry, (err, person) =>
-        @.kerry = person
-
-      Person.create jim, (err, person) =>
-        @.jim = person
+      Person.create people, (err, people) =>
+        @.kerry     = people[0]
+        @.firstJim  = people[1]
 
       Person.first @.callback; return
 
@@ -569,26 +541,42 @@ suite.addBatch
         return
 
 .addBatch
+  'Model.last with no options':
+    topic: ->
+      people = [
+        { first_name: 'Jim',   last_name: 'Drannbauer' }
+        { first_name: 'Kerry', last_name: 'Drannbauer' }
+      ]
+
+      Person.create people, (err, people) =>
+        @.jim   = people[0]
+        @.kerry = people[1]
+
+      Person.last @.callback; return
+
+    'finds and returns a model instance': (err, person) ->
+      assert.instanceOf person, Person
+
+    'finds the last model instance': (err, person) ->
+      assert.deepEqual person, @.kerry
+
+    teardown: ->
+      Person.deleteAll (err, result) ->
+        return
+
+.addBatch
   'Model.last with options':
     topic: ->
-      firstJim =
-        first_name: 'Jim'
-        last_name:  'Drann'
-      secondJim =
-        first_name: 'Jim'
-        last_name:  'Bauer'
-      kerry =
-        first_name: 'Kerry'
-        last_name:  'Drannbauer'
+      people = [
+        { first_name: 'Jim',   last_name: 'Drannbauer' }
+        { first_name: 'Jim',   last_name: 'Dramboui'   }
+        { first_name: 'Kerry', last_name: 'Drannbauer' }
+      ]
 
-      Person.create firstJim, (err, person) =>
-        @.firstJim = person
-
-      Person.create secondJim, (err, person) =>
-        @.secondJim = person
-
-      Person.create kerry, (err, person) =>
-        @.kerry = person
+      Person.create people, (err, people) =>
+        @.firstJim  = people[0]
+        @.secondJim = people[1]
+        @.kerry     = people[2]
 
       options =
         where:
@@ -600,34 +588,6 @@ suite.addBatch
 
     'finds the last model instance that meets criteria': (err, person) ->
       assert.deepEqual person, @.secondJim
-
-    teardown: ->
-      Person.deleteAll (err, result) ->
-        return
-
-.addBatch
-  'Model.last with no options':
-    topic: ->
-      kerry =
-        first_name: 'Kerry'
-        last_name:  'Drannbauer'
-      jim =
-        first_name: 'Jim'
-        last_name:  'Drannbauer'
-
-      Person.create jim, (err, person) =>
-        @.jim = person
-
-      Person.create kerry, (err, person) =>
-        @.kerry = person
-
-      Person.last @.callback; return
-
-    'finds and returns a model instance': (err, person) ->
-      assert.instanceOf person, Person
-
-    'finds the last model instance': (err, person) ->
-      assert.deepEqual person, @.kerry
 
     teardown: ->
       Person.deleteAll (err, result) ->
