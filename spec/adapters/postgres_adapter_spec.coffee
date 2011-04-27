@@ -113,6 +113,14 @@ describe 'Norm.Adapters.PostgresAdapter', ->
       actual = adapter.insert('people', instances)
       expect(actual).toEqual("INSERT INTO people (first_name,last_name) VALUES ('Jim','Drannbauer'),('Kerry','Drannbauer') RETURNING *;")
 
+    it 'returns a query with multiple mixed (NULL) attributes and multiple rows', ->
+      instances = [
+        { attributes: { first_name: 'James', middle_name:  'William' } }
+        { attributes: { first_name: 'Kerry', last_name:  'Drannbauer' } }
+      ]
+      actual = adapter.insert('people', instances)
+      expect(actual).toEqual("INSERT INTO people (first_name,middle_name,last_name) VALUES ('James','William',NULL),('Kerry',NULL,'Drannbauer') RETURNING *;")
+
   describe '#update', ->
     it 'returns a query with one set option', ->
       options =

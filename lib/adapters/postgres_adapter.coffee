@@ -93,7 +93,7 @@ class PostgresAdapter
   _values: (values) ->
     rows = _(values).map (row) ->
       quoted = _(row).map (value) ->
-        "'" + value + "'"
+        if value then "'" + value + "'" else 'NULL'
       '(' + quoted + ')'
 
     'VALUES ' + rows
