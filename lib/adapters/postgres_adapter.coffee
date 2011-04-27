@@ -106,11 +106,18 @@ class PostgresAdapter
 
   _where: (criteria) ->
     operators =
-      $gt:   ' > '
-      $gte:  ' >= '
-      $lt:   ' < '
-      $lte:  ' <= '
-      $like: ' LIKE '
+      $eq:    ' = '
+      $neq:   ' <> '
+      $gt:    ' > '
+      $gte:   ' >= '
+      $lt:    ' < '
+      $lte:   ' <= '
+      $like:  ' LIKE '
+      $ilike: ' ILIKE '
+      $is:    ' IS '
+      $isnt:  ' IS NOT '
+      $in:    ' IN '
+      $nin:   ' NOT IN '
 
     if criteria
       conditions = _(criteria).chain()
