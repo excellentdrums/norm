@@ -6,87 +6,69 @@ describe 'Norm.Adapters.PostgresAdapter', ->
       toBeInstanceOf: (expected) ->
         @.actual instanceof expected
 
-  adapter = new Norm.Adapters.PostgresAdapter
+  adapter = new Norm.Adapters.PostgresAdapter()
 
   it 'is an instance of PostgresAdapter', ->
     expect(adapter).toBeInstanceOf(Norm.Adapters.PostgresAdapter)
 
   describe '#select', ->
     it 'returns a default query', ->
-      actual = adapter.select('people', {})
+      criteria = new Norm.Criteria()
+      actual   = adapter.select('people', criteria)
       expect(actual).toEqual("SELECT * FROM people;")
 
     it 'returns a query with one select option', ->
-      options =
-        select: 'first_name'
-      actual = adapter.select('people', options)
+      criteria = new Norm.Criteria().only('first_name')
+      actual   = adapter.select('people', criteria)
       expect(actual).toEqual("SELECT first_name FROM people;")
 
     it 'returns a query with multiple select options', ->
-      options =
-        select: ['first_name', 'last_name']
-      actual = adapter.select('people', options)
+      criteria = new Norm.Criteria().only(['first_name', 'last_name'])
+      actual   = adapter.select('people', criteria)
       expect(actual).toEqual("SELECT first_name,last_name FROM people;")
 
     it 'returns a query with one where option', ->
-      options =
-        where:
-          first_name: 'Jim'
-      actual = adapter.select('people', options)
+      criteria = new Norm.Criteria().where( { first_name: 'Jim' } )
+      actual   = adapter.select('people', criteria)
       expect(actual).toEqual("SELECT * FROM people WHERE first_name='Jim';")
 
     it 'returns a query with multiple where options', ->
-      options =
-        where:
-          first_name: 'Jim'
-          last_name:  'Drannbauer'
-      actual = adapter.select('people', options)
+      criteria = new Norm.Criteria().where( { first_name: 'Jim' } )
+                                    .where( { last_name:  'Drannbauer' } )
+      actual   = adapter.select('people', criteria)
       expect(actual).toEqual("SELECT * FROM people WHERE first_name='Jim' AND last_name='Drannbauer';")
 
     it 'returns a query with one where operator option', ->
-      options =
-        where:
-          age:
-            $gt: 3
-      actual = adapter.select('people', options)
+      criteria = new Norm.Criteria().where( { age: { $gt: 3 } } )
+      actual   = adapter.select('people', criteria)
       expect(actual).toEqual("SELECT * FROM people WHERE age > '3';")
 
     it 'returns a query with multiple where operator options', ->
-      options =
-        where:
-          age:
-            $gt: 3
-          first_name:
-            $like: '%im%'
-      actual = adapter.select('people', options)
+      criteria = new Norm.Criteria().where( { age: { $gt: 3 } } )
+                                    .where( { first_name: { $like: '%im%' } } )
+      actual   = adapter.select('people', criteria)
       expect(actual).toEqual("SELECT * FROM people WHERE age > '3' AND first_name LIKE '%im%';")
 
-    it 'returns a query with order options', ->
-      options =
-        order: 'last_name'
-      actual = adapter.select('people', options)
-      expect(actual).toEqual("SELECT * FROM people ORDER BY last_name;")
+    it 'returns a query with order by options', ->
+      criteria = new Norm.Criteria().orderBy([['last_name', 'asc']])
+      actual   = adapter.select('people', criteria)
+      expect(actual).toEqual("SELECT * FROM people ORDER BY last_name ASC;")
 
     it 'returns a query with order ascending options', ->
-      options =
-        order:
-          $asc: 'last_name'
-      actual = adapter.select('people', options)
+      criteria = new Norm.Criteria().ascending('last_name')
+      actual   = adapter.select('people', criteria)
       expect(actual).toEqual("SELECT * FROM people ORDER BY last_name ASC;")
 
     it 'returns a query with multiple ascending and descending order options', ->
-      options =
-        order:
-          $asc:  ['last_name', 'first_name']
-          $desc: 'age'
-      actual = adapter.select('people', options)
+      criteria = new Norm.Criteria().asc('last_name')
+                                    .asc('first_name')
+                                    .desc('age')
+      actual   = adapter.select('people', criteria)
       expect(actual).toEqual("SELECT * FROM people ORDER BY last_name ASC,first_name ASC,age DESC;")
 
     it 'returns a query with limit and offset options', ->
-      options =
-        limit:  20
-        offset: 40
-      actual = adapter.select('people', options)
+      criteria = new Norm.Criteria().limit(20).skip(40)
+      actual   = adapter.select('people', criteria)
       expect(actual).toEqual("SELECT * FROM people LIMIT 20 OFFSET 40;")
 
   describe '#insert', ->

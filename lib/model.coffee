@@ -1,102 +1,18 @@
-class Model
+Mixable     = require './mixable'
+Queryable   = require './queryable'
+Persistable = require './persistable'
+Findable    = require './findable'
+
+module.exports = class Model extends Mixable
+  @extend Queryable
+  @extend Persistable
+  @extend Findable
+
   constructor: (@attributes) ->
     @.tableName = @.constructor.tableName
 
   @init: (attributes, callback) ->
     callback null, new @ attributes
-
-  @find: (id, callback) ->
-    options =
-      where:
-        id: id
-      limit: 1
-    @.connection.emit 'select', @, options, (err, result) =>
-      callback err, new @ result.rows[0]
-
-  @findOrCreateBy: (attributes, callback) ->
-    options =
-      where: attributes
-      limit: 1
-    @.connection.emit 'select', this, options, (err, result) =>
-      if result.rowCount > 0
-        @.init result.rows[0], callback
-      else
-        @.create attributes, callback
-
-  @findOrInitializeBy: (attributes, callback) ->
-    options =
-      where: attributes
-      limit: 1
-    @.connection.emit 'select', this, options, (err, result) =>
-      if result.rowCount > 0
-        @.init result.rows[0], callback
-      else
-        @.init attributes, callback
-
-  @create: (attributes, callback) ->
-    attributes = [attributes] unless attributes instanceof Array
-    instances = _(attributes).map (attribute) =>
-      new @ attribute
-
-    @.connection.emit 'insert', this, instances, (err, result) =>
-      if result.rowCount > 1
-        instances = _(result.rows).map (attributes) =>
-          new @ attributes
-        callback err, instances
-      else
-        instance = new @ result.rows[0]
-        callback err, instance
-
-  @deleteAll: (options, callback) ->
-    if typeof options is 'function'
-      callback = options;
-      options  = {}
-    @.connection.emit 'delete', @, options, (err, result) =>
-      callback err, result.rowCount
-
-  @all: (options, callback) ->
-    if typeof options is 'function'
-      callback = options;
-      options  = {}
-    @.connection.emit 'select', @, options, (err, result) =>
-      instances = _(result.rows).map (attributes) =>
-        new @ attributes
-      callback err, instances
-
-  @count: (options, callback) ->
-    if typeof options is 'function'
-      callback = options
-      options  = {}
-    options = _({ select: "COUNT(*)" }).extend options
-    @.connection.emit 'select', @, options, (err, result) =>
-      callback err, result.rows[0].count
-
-  @exists: (options, callback) ->
-    options = _({ select: 'id', limit: 1 }).extend options
-    @.connection.emit 'select', this, options, (err, result) =>
-      callback err, result.rowCount > 0
-
-  @first: (options, callback) ->
-    if typeof options is 'function'
-      callback = options
-      options  = {}
-    options = _({ limit: 1 }).extend options
-    @.connection.emit 'select', this, options, (err, result) =>
-      if result.rowCount > 0
-        @.init result.rows[0], callback
-      else
-        callback err, null
-
-  @last: (options, callback) ->
-    if typeof options is 'function'
-      callback = options
-      options  = {}
-    options = _({ limit: 1, order: { $desc: 'id' } }).extend options
-    @.connection.emit 'select', this, options, (err, result) =>
-      if result.rowCount > 0
-        @.init result.rows[0], callback
-      else
-        callback err, null
 
   save: (callback) ->
     @.constructor.connection.emit 'insert', @.constructor, @, (err, result) =>
@@ -134,5 +50,3 @@ class Model
       val = attrs[attr]
       if not _.isEqual(now[attr], val)
         now[attr] = val
-
-module.exports = Model

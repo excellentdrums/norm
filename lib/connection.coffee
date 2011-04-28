@@ -35,8 +35,8 @@ class Connection extends EventEmitter
       insert = @.adapter.insert klass.tableName, instances
       @.emit 'query', insert, callback
 
-    @.on 'select', (klass, options, callback) =>
-      select = @.adapter.select klass.tableName, options
+    @.on 'select', (klass, criteria, callback) =>
+      select = @.adapter.select klass.tableName, criteria
       @.emit 'query', select, callback
 
     @.on 'update', (instance, options, callback) =>

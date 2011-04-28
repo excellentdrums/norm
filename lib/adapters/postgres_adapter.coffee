@@ -23,34 +23,34 @@ class PostgresAdapter
       .value()
 
     new Statement(
-      this._insertInto tableName
-      this._fields     fields
-      this._values     values
-      this._returning  '*'
+      @._insertInto tableName
+      @._fields     fields
+      @._values     values
+      @._returning  '*'
     ).toString()
 
-  select: (tableName, options) ->
+  select: (tableName, criteria) ->
     new Statement(
-      this._select options.select
-      this._from   tableName
-      this._where  options.where
-      this._order  options.order
-      this._limit  options.limit
-      this._offset options.offset
+      @._select criteria.options.only
+      @._from   tableName
+      @._where  criteria.options.where
+      @._order  criteria.options.sort
+      @._limit  criteria.options.limit
+      @._offset criteria.options.skip
     ).toString()
 
   update: (tableName, options) ->
     new Statement(
-      this._update    tableName
-      this._set       options.set
-      this._where     options.where
-      this._returning '*'
+      @._update    tableName
+      @._set       options.set
+      @._where     options.where
+      @._returning '*'
     ).toString()
 
   delete: (tableName, options) ->
     new Statement(
-      this._deleteFrom tableName
-      this._where      options.where
+      @._deleteFrom tableName
+      @._where      options.where
     ).toString()
 
   _select: (fields) ->
@@ -60,23 +60,15 @@ class PostgresAdapter
   _from: (tableName) ->
     'FROM ' + tableName
 
-  _order: (order) ->
-    directions =
-      $asc:  'ASC'
-      $desc: 'DESC'
+  _order: (sort) ->
+    direction =
+      asc:  'ASC'
+      desc: 'DESC'
 
-    if order
+    if sort
       'ORDER BY ' +
-      if typeof order is 'object'
-        for direction, fields of order
-          fields = if _(fields).isArray() then fields else [fields]
-          _(fields).chain()
-            .map (field) ->
-              field + " " + directions[direction]
-            .join(',')
-            .value()
-      else
-        order
+      _(sort).map (s) ->
+        s[0] + ' ' + direction[s[1]]
 
   _limit: (limit) ->
     'LIMIT ' + limit if limit
