@@ -31,20 +31,17 @@ class Connection extends EventEmitter
       @.client.query query, (err, result) =>
         callback(err, result)
 
-    @.on 'insert', (klass, instances, callback) =>
-      insert = @.adapter.insert klass.tableName, instances
-      @.emit 'query', insert, callback
+    @.on 'insert', (criteria, callback) =>
+      @.emit 'query', criteria.asInsert(), callback
 
-    @.on 'select', (klass, criteria, callback) =>
-      select = @.adapter.select klass.tableName, criteria
-      @.emit 'query', select, callback
+    @.on 'select', (criteria, callback) =>
+      @.emit 'query', criteria.asSelect(), callback
 
-    @.on 'update', (instance, options, callback) =>
-      update = @.adapter.update instance.tableName, options
-      @.emit 'query', update, callback
+    @.on 'update', (criteria, callback) =>
+      # update = @.adapter.update instance.tableName, options
+      @.emit 'query', criteria.asUpdate(), callback
 
-    @.on 'delete', (instance, options, callback) =>
-      del = @.adapter.delete instance.tableName, options
-      @.emit 'query', del, callback
+    @.on 'delete', (criteria, callback) =>
+      @.emit 'query', criteria.asDelete(), callback
 
 module.exports = Connection

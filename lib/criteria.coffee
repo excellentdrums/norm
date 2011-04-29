@@ -1,5 +1,6 @@
 module.exports = class Criteria
-  constructor: (@options = {}) ->
+  constructor: (@klass, @options = {}, @instances) ->
+    @tableName = @klass.tableName
 
   where: (where) ->
     @options.where or= {}
@@ -54,3 +55,15 @@ module.exports = class Criteria
       @options.notIn[key] or= []
       @options.notIn[key].push val...
     @
+
+  asInsert: ->
+    @klass.connection.adapter.insert @
+
+  asSelect: ->
+    @klass.connection.adapter.select @
+
+  asUpdate: ->
+    @klass.connection.adapter.update @
+
+  asDelete: ->
+    @klass.connection.adapter.delete @

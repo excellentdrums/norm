@@ -1,3 +1,4 @@
+Criteria    = require './criteria'
 Mixable     = require './mixable'
 Queryable   = require './queryable'
 Persistable = require './persistable'
@@ -15,7 +16,8 @@ module.exports = class Model extends Mixable
     callback null, new @ attributes
 
   save: (callback) ->
-    @.constructor.connection.emit 'insert', @.constructor, @, (err, result) =>
+    criteria = new Criteria @.constructor, {}, @
+    @.constructor.connection.emit 'insert', criteria, (err, result) =>
       @.set result.rows[0]
       callback err, @
 
@@ -24,7 +26,8 @@ module.exports = class Model extends Mixable
       where:
         id: @.get('id')
       set: attributes
-    @.constructor.connection.emit 'update', @, options, (err, result) =>
+    criteria = new Criteria @.constructor, options
+    @.constructor.connection.emit 'update', criteria, (err, result) =>
       @.set result.rows[0]
       callback err, @
 
