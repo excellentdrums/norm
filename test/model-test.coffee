@@ -12,7 +12,7 @@ connectionParams =
   host:     'localhost'
   port:     5432
 
-Norm.connect(connectionParams);
+Norm.connect(connectionParams)
 
 class Person extends Norm.Model
   @tableName: 'people'
@@ -29,6 +29,5 @@ suite.addBatch
     topic: -> new Person()
     'is the class name lowercase pluralized': (model) ->
       assert.equal model.tableName, 'people'
-
 
 .export(module)

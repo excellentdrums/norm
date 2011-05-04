@@ -1,4 +1,4 @@
-module.exports = class PostgresNode
+module.exports = class PostgresNodes
   select: (fields) ->
     fields or= '*'
     'SELECT ' + fields

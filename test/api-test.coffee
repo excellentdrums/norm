@@ -12,7 +12,7 @@ connectionParams =
   host:     'localhost'
   port:     5432
 
-Norm.connect(connectionParams);
+Norm.connect(connectionParams)
 
 class Person extends Norm.Model
   @tableName: 'people'
@@ -231,6 +231,31 @@ suite.addBatch
 
       'and can be found': (err, person) ->
         assert.deepEqual person, @.updated
+
+    teardown: ->
+      Person.deleteAll (err, result) ->
+        return
+
+.addBatch
+  'Model.delete':
+    topic: ->
+      options =
+        first_name: 'Kerry'
+        last_name:  'Drannbauer'
+      Person.create options, (err, person) =>
+        @deleted = person
+        person.delete @.callback; return
+      return
+
+    'returns the number of rows deleted': (err, result) ->
+      assert.typeOf result, 'number'
+
+    'persists the deletion of the model instance':
+      topic: ->
+        Person.find @deleted.get('id'), @.callback; return
+
+      'and cannot be found': (err, person) ->
+        assert.deepEqual person, null
 
     teardown: ->
       Person.deleteAll (err, result) ->

@@ -4,7 +4,10 @@ class Findable
   @find: (id, callback) ->
     criteria = @.where({id: id}).limit(1)
     @.connection.emit 'select', criteria, (err, result) =>
-      callback err, new @ result.rows[0]
+      if result.rowCount > 0
+        callback err, new @ result.rows[0]
+      else
+        callback err, null
 
   @findOrCreateBy: (attributes, callback) ->
     criteria = @.where(attributes).limit(1)
@@ -24,7 +27,7 @@ class Findable
 
   @all: (options, callback) ->
     if typeof options is 'function'
-      callback = options;
+      callback = options
       options  = {}
     criteria = new Criteria(@, options)
     @.connection.emit 'select', criteria, (err, result) =>

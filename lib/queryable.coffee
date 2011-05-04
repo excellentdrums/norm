@@ -33,3 +33,6 @@ module.exports = class Queryable
 
   @notIn: (notIn) ->
     new Criteria @, { notIn: notIn }
+
+  @set: (set) ->
+    new Criteria @, { set: set }

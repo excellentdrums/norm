@@ -3,4 +3,4 @@ util = global.util = require 'util'
 
 Norm = require './norm'
 
-module.exports = Norm;
+module.exports = Norm

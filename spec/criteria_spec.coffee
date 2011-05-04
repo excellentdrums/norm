@@ -24,6 +24,8 @@ describe 'Criteria', ->
                .orderBy([['awesome', 'asc'], ['brilliant', 'desc']])
                .notIn( { blorg: ['blorg', 'blargy'] } )
                .notIn( { hooray: ['yippee'], blorg: ['WTF!??!?!'] } )
+               .set( { season: 'winter' } )
+               .set( { tempurature: 'cold' } )
 
   it 'is a Criteria', ->
     expect(criteria).toBeInstanceOf(Criteria)
@@ -57,3 +59,6 @@ describe 'Criteria', ->
 
   it 'has notIn option', ->
     expect(criteria.options.notIn).toEqual( { hooray: ['yippee'], blorg: ['blorg', 'blargy', 'WTF!??!?!'] } )
+
+  it 'has a set option', ->
+    expect(criteria.options.set).toEqual( { season: 'winter', tempurature: 'cold' })

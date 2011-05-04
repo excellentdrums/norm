@@ -22,21 +22,16 @@ module.exports = class Model extends Mixable
       callback err, @
 
   updateAttributes: (attributes, callback) ->
-    options =
-      where:
-        id: @.get('id')
-      set: attributes
-    criteria = new Criteria @.constructor, options
+    criteria = new Criteria(@.constructor)
+                     .set(attributes)
+                     .where( { id: @.get('id') } )
     @.constructor.connection.emit 'update', criteria, (err, result) =>
       @.set result.rows[0]
       callback err, @
 
   delete: (callback) ->
-    options =
-      where:
-        id: @.get('id')
-    @.constructor.connection.emit 'delete', @, options, (err, result) =>
-      console.log err
+    criteria = new Criteria(@.constructor).where( { id: @.get('id') } )
+    @.constructor.connection.emit 'delete', criteria, (err, result) =>
       callback err, result.rowCount
 
   destroy: (callback) ->

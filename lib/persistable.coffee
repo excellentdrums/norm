@@ -19,7 +19,7 @@ module.exports = class Persistable
 
   @deleteAll: (options, callback) ->
     if typeof options is 'function'
-      callback = options;
+      callback = options
       options  = {}
     criteria = new Criteria @, options
     @.connection.emit 'delete', criteria, (err, result) =>

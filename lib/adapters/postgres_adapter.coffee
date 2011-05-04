@@ -1,4 +1,6 @@
+Postgres      = require 'pg'
 PostgresNodes = require './postgres_nodes'
+EventEmitter  = require('events').EventEmitter
 
 class Statement
   constructor: (@parts...) ->
@@ -6,9 +8,13 @@ class Statement
   toString: ->
     _(@parts).compact().join(' ') + ';'
 
-class PostgresAdapter
-  constructor: ->
-    @nodes = new PostgresNodes
+class PostgresAdapter extends EventEmitter
+  constructor: (params) ->
+    @nodes  = new PostgresNodes
+    @client = new Postgres.Client(params)
+    @on 'query', (query, callback) =>
+      @client.query query, (err, result) =>
+        callback(err, result)
 
   insert: (criteria) ->
     instances = criteria.instances
