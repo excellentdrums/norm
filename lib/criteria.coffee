@@ -1,6 +1,20 @@
-module.exports = class Criteria
+EventEmitter = require('events').EventEmitter
+
+module.exports = class Criteria extends EventEmitter
   constructor: (@klass = {}, @options = {}, @instances) ->
     @tableName = @klass.tableName
+
+    @on 'insert', (callback) =>
+      @klass.connection.adapter.emit 'insert', @, callback
+
+    @on 'select', (callback) =>
+      @klass.connection.adapter.emit 'select', @, callback
+
+    @on 'update', (callback) =>
+      @klass.connection.adapter.emit 'update', @, callback
+
+    @on 'delete', (callback) =>
+      @klass.connection.adapter.emit 'delete', @, callback
 
   where: (where) ->
     @options.where or= {}
@@ -60,15 +74,3 @@ module.exports = class Criteria
     @options.set or= {}
     _(@options.set).extend set
     @
-
-  asInsert: ->
-    @klass.connection.adapter.insert @
-
-  asSelect: ->
-    @klass.connection.adapter.select @
-
-  asUpdate: ->
-    @klass.connection.adapter.update @
-
-  asDelete: ->
-    @klass.connection.adapter.delete @

@@ -89,7 +89,7 @@ describe 'Norm.Adapters.PostgresAdapter', ->
           first_name: 'Jim'
       criteria = new Norm.Criteria({tableName: 'people'}, {}, instances)
       actual   = adapter.insert(criteria)
-      expect(actual).toEqual("INSERT INTO people (first_name) VALUES ('Jim') RETURNING *;")
+      expect(actual).toEqual("INSERT INTO people (first_name) VALUES ('Jim') RETURNING id;")
 
     it 'returns a query with multiple attributes', ->
       instances =
@@ -98,7 +98,7 @@ describe 'Norm.Adapters.PostgresAdapter', ->
           last_name:  'Drannbauer'
       criteria = new Norm.Criteria({tableName: 'people'}, {}, instances)
       actual   = adapter.insert(criteria)
-      expect(actual).toEqual("INSERT INTO people (first_name,last_name) VALUES ('Jim','Drannbauer') RETURNING *;")
+      expect(actual).toEqual("INSERT INTO people (first_name,last_name) VALUES ('Jim','Drannbauer') RETURNING id;")
 
     it 'returns a query with multiple attributes and multiple rows', ->
       instances = [
@@ -107,7 +107,7 @@ describe 'Norm.Adapters.PostgresAdapter', ->
       ]
       criteria = new Norm.Criteria({tableName: 'people'}, {}, instances)
       actual   = adapter.insert(criteria)
-      expect(actual).toEqual("INSERT INTO people (first_name,last_name) VALUES ('Jim','Drannbauer'),('Kerry','Drannbauer') RETURNING *;")
+      expect(actual).toEqual("INSERT INTO people (first_name,last_name) VALUES ('Jim','Drannbauer'),('Kerry','Drannbauer') RETURNING id;")
 
     it 'returns a query with multiple mixed (NULL) attributes and multiple rows', ->
       instances = [
@@ -116,21 +116,21 @@ describe 'Norm.Adapters.PostgresAdapter', ->
       ]
       criteria = new Norm.Criteria({ tableName: 'people' }, {}, instances)
       actual = adapter.insert(criteria)
-      expect(actual).toEqual("INSERT INTO people (first_name,middle_name,last_name) VALUES ('James','William',NULL),('Kerry',NULL,'Drannbauer') RETURNING *;")
+      expect(actual).toEqual("INSERT INTO people (first_name,middle_name,last_name) VALUES ('James','William',NULL),('Kerry',NULL,'Drannbauer') RETURNING id;")
 
   describe '#update', ->
     it 'returns a query with one set option', ->
       criteria = new Norm.Criteria( { tableName: 'people' } )
                        .set( { first_name: 'Jim' } )
       actual   = adapter.update(criteria)
-      expect(actual).toEqual("UPDATE people SET first_name='Jim' RETURNING *;")
+      expect(actual).toEqual("UPDATE people SET first_name='Jim';")
 
     it 'returns a query with multiple set options', ->
       criteria = new Norm.Criteria( { tableName: 'people' } )
                        .set( { first_name: 'Jim' } )
                        .set( { last_name:  'Drannbauer' } )
       actual   = adapter.update(criteria)
-      expect(actual).toEqual("UPDATE people SET first_name='Jim',last_name='Drannbauer' RETURNING *;")
+      expect(actual).toEqual("UPDATE people SET first_name='Jim',last_name='Drannbauer';")
 
     it 'returns a query with one where option', ->
       criteria = new Norm.Criteria( { tableName: 'people' } )
@@ -138,7 +138,7 @@ describe 'Norm.Adapters.PostgresAdapter', ->
                        .set( { last_name:  'Drannbauer' } )
                        .where( { id: 13 } )
       actual   = adapter.update(criteria)
-      expect(actual).toEqual("UPDATE people SET first_name='Jim',last_name='Drannbauer' WHERE id='13' RETURNING *;")
+      expect(actual).toEqual("UPDATE people SET first_name='Jim',last_name='Drannbauer' WHERE id='13';")
 
     it 'returns a query with multiple where options', ->
       criteria = new Norm.Criteria({tableName: 'people'})
@@ -147,14 +147,14 @@ describe 'Norm.Adapters.PostgresAdapter', ->
                        .where( { first_name: 'Gym' } )
                        .where( { last_name:  'Jambager' } )
       actual   = adapter.update(criteria)
-      expect(actual).toEqual("UPDATE people SET first_name='Jim',last_name='Drannbauer' WHERE first_name='Gym' AND last_name='Jambager' RETURNING *;")
+      expect(actual).toEqual("UPDATE people SET first_name='Jim',last_name='Drannbauer' WHERE first_name='Gym' AND last_name='Jambager';")
 
     it 'returns a query with multiple where operation options', ->
       criteria = new Norm.Criteria({tableName: 'people'})
                        .set( { season: 'winter' } )
                        .where( { date: { $gt: '2010-12-21', $lt: '2011-03-21' } } )
       actual   = adapter.update(criteria)
-      expect(actual).toEqual("UPDATE people SET season='winter' WHERE date > '2010-12-21' AND date < '2011-03-21' RETURNING *;")
+      expect(actual).toEqual("UPDATE people SET season='winter' WHERE date > '2010-12-21' AND date < '2011-03-21';")
 
   describe '#delete', ->
     it 'returns a default query', ->

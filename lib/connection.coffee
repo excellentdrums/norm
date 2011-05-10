@@ -1,26 +1,14 @@
 EventEmitter = require('events').EventEmitter
-adapters     = require './adapters'
+Adapters     = require './adapters'
 
 module.exports = class Connection extends EventEmitter
   constructor: (params) ->
-    @adapter   = new adapters[params.adapter](params)
+    @adapter   = new Adapters[params.adapter](params)
     @connected = false
-
-    @on 'insert', (criteria, callback) =>
-      @adapter.emit 'query', criteria.asInsert(), callback
-
-    @on 'select', (criteria, callback) =>
-      @adapter.emit 'query', criteria.asSelect(), callback
-
-    @on 'update', (criteria, callback) =>
-      @adapter.emit 'query', criteria.asUpdate(), callback
-
-    @on 'delete', (criteria, callback) =>
-      @adapter.emit 'query', criteria.asDelete(), callback
 
   connect: ->
     if @connected or @doConnect()
-      console.log 'Connected!'
+      console.log 'Connected with ' + @adapter.constructor.name + '!'
     else
       console.log 'Connection Failed!'
 

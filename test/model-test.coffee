@@ -4,16 +4,6 @@ vows   = require 'vows'
 assert = require 'assert'
 eyes   = require 'eyes'
 
-connectionParams =
-  adapter:  'PostgresAdapter'
-  user:     'jimmy'
-  password: ''
-  database: 'hooray'
-  host:     'localhost'
-  port:     5432
-
-Norm.connect(connectionParams)
-
 class Person extends Norm.Model
   @tableName: 'people'
 

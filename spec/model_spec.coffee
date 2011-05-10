@@ -8,10 +8,13 @@ connectionParams =
   host:     'localhost'
   port:     5432
 
-Norm.connect(connectionParams)
-
 class Person extends Norm.Model
   @tableName: 'people'
+  @establishConnection connectionParams
+  @field 'first_name'
+  @field 'middle_name'
+  @field 'last_name'
+  @field 'age'
 
 deletedAll = false
 Person.deleteAll (err, result) ->
@@ -49,9 +52,9 @@ describe 'Model', ->
     it 'does not define the id property on the initialized model instance', ->
       expect(instance.get('id')).not.toBeDefined()
 
-    it 'does not define other properties on the initialized model instance', ->
-      expect(instance.get('middle_name')).not.toBeDefined()
-      expect(instance.get('age')).not.toBeDefined()
+    it 'sets the default value for other properties on the initialized model instance', ->
+      expect(instance.get('middle_name')).toBeNull()
+      expect(instance.get('age')).toBeNull()
 
     it 'leaves unknown properties of the initialized model instance undefined', ->
       expect(instance.get('blarg')).not.toBeDefined()

@@ -1,4 +1,4 @@
-Postgres      = require 'pg'
+MySQL         = require 'mysql'
 PostgresNodes = require './postgres_nodes'
 EventEmitter  = require('events').EventEmitter
 
@@ -8,18 +8,27 @@ class Statement
   toString: ->
     _(@parts).compact().join(' ') + ';'
 
-class PostgresAdapter extends EventEmitter
+module.exports = class MySQLAdapter extends EventEmitter
   constructor: (params) ->
     @nodes  = new PostgresNodes
-    @client = new Postgres.Client(params)
+    @client = new MySQL.Client(params)
 
     @on 'insert', (criteria, callback) =>
       @client.query @insert(criteria), (err, result) =>
-        callback(err, result)
+        resultAdapter = {}
+        resultAdapter.rowCount = result.affectedRows
+        resultAdapter.rows = []
+        for i in [0..(result.affectedRows - 1)]
+          do (i) ->
+            resultAdapter.rows.push { id: (result.insertId + i) }
+        callback(err, resultAdapter)
 
     @on 'select', (criteria, callback) =>
       @client.query @select(criteria), (err, result) =>
-        callback(err, result)
+        resultAdapter = {}
+        resultAdapter.rows = result
+        resultAdapter.rowCount = result.length
+        callback(err, resultAdapter)
 
     @on 'update', (criteria, callback) =>
       @client.query @update(criteria), (err, result) =>
@@ -27,7 +36,9 @@ class PostgresAdapter extends EventEmitter
 
     @on 'delete', (criteria, callback) =>
       @client.query @delete(criteria), (err, result) =>
-        callback(err, result)
+        resultAdapter = {}
+        resultAdapter.rowCount = result.affectedRows
+        callback(err, resultAdapter)
 
   insert: (criteria) ->
     instances = criteria.instances
@@ -51,7 +62,6 @@ class PostgresAdapter extends EventEmitter
       @nodes.insertInto criteria.tableName
       @nodes.fields     fields
       @nodes.values     values
-      @nodes.returning  'id'
     ).toString()
 
   select: (criteria) ->
@@ -76,5 +86,3 @@ class PostgresAdapter extends EventEmitter
       @nodes.deleteFrom criteria.tableName
       @nodes.where      criteria.options.where
     ).toString()
-
-module.exports = PostgresAdapter

@@ -5,19 +5,21 @@ assert = require 'assert'
 eyes   = require 'eyes'
 
 connectionParams =
-  adapter:  'PostgresAdapter'
-  user:     'jimmy'
+  adapter:  'MySQLAdapter'
+  user:     'root'
   password: ''
   database: 'hooray'
   host:     'localhost'
-  port:     5432
-
-Norm.connect(connectionParams)
 
 class Person extends Norm.Model
   @tableName: 'people'
+  @establishConnection connectionParams
+  @field 'first_name',  { default: null }
+  @field 'middle_name', { default: 'Stumpy' }
+  @field 'last_name',   { default: null }
+  @field 'age'
 
-suite = vows.describe 'Norm'
+suite = vows.describe 'Norm MySQL Integration'
 
 suite.addBatch
   'Model.deleteAll':
@@ -48,9 +50,11 @@ suite.addBatch
     'does not define the id property on the initialized model instance': (err, person) ->
       assert.isUndefined person.get('id')
 
-    'does not define other properties on the initialized model instance': (err, person) ->
-      assert.isUndefined person.get('middle_name')
-      assert.isUndefined person.get('age')
+    'sets the default values for other properties on the initialized model instance': (err, person) ->
+      assert.equal person.get('middle_name'), 'Stumpy'
+
+    'assumes null value for other properties on the initialized model instance': (err, person) ->
+      assert.isNull person.get('age')
 
     'leaves unknown properties of the initialized model instance undefined': (err, person) ->
       assert.isUndefined person.get('blarg')
@@ -73,8 +77,10 @@ suite.addBatch
     'sets the id property on the created model instance': (err, person) ->
       assert.isNotNull person.get('id')
 
-    'sets the other properties on the created model instance to null': (err, person) ->
-      assert.isNull person.get('middle_name')
+    'sets the default values for other properties on the created model instance': (err, person) ->
+      assert.equal person.get('middle_name'), 'Stumpy'
+
+    'assumes null value for other properties on the created model instance': (err, person) ->
       assert.isNull person.get('age')
 
     'leaves unknown properties of the created model instance undefined': (err, person) ->
@@ -99,18 +105,20 @@ suite.addBatch
 
     'sets the given properties on each of the created model instances': (err, people) ->
       assert.equal people[0].get('first_name'), 'Kerry'
-      assert.equal people[0].get('last_name'), 'Drannbauer'
+      assert.equal people[0].get('last_name'),  'Drannbauer'
       assert.equal people[1].get('first_name'), 'Jim'
-      assert.equal people[1].get('last_name'), 'Drannbauer'
+      assert.equal people[1].get('last_name'),  'Drannbauer'
 
     'sets the id property on the created model instances': (err, people) ->
       assert.isNotNull people[0].get('id')
       assert.isNotNull people[1].get('id')
 
-    'sets the other properties on the created model instances to null': (err, people) ->
-      assert.isNull people[0].get('middle_name')
+    'sets the default values for other properties on the created model instances': (err, people) ->
+      assert.equal people[0].get('middle_name'), 'Stumpy'
+      assert.equal people[1].get('middle_name'), 'Stumpy'
+
+    'assumes null value for other properties on the created model instances': (err, people) ->
       assert.isNull people[0].get('age')
-      assert.isNull people[1].get('middle_name')
       assert.isNull people[1].get('age')
 
     'leaves unknown properties of the created model instances undefined': (err, people) ->
@@ -136,15 +144,15 @@ suite.addBatch
       assert.instanceOf person, Person
 
     'provides the properties of the found model instance': (err, person) ->
-      assert.equal person.get('first_name'), 'Kyra'
-      assert.equal person.get('last_name'), 'Drannbauer'
+      assert.equal person.get('first_name'),  'Kyra'
+      assert.equal person.get('middle_name'), 'Stumpy'
+      assert.equal person.get('last_name'),   'Drannbauer'
 
     'provides the id property of the found model instance': (err, person) ->
       assert.isNotNull person.get('id')
       assert.equal person.get('id'), @.created.get('id')
 
-    'provides the null properties on the found model instance as null': (err, person) ->
-      assert.isNull person.get('middle_name')
+    'provides the null properties on the found model instance': (err, person) ->
       assert.isNull person.get('age')
 
     'leaves unknown properties of the found model instance undefined': (err, person) ->
@@ -170,13 +178,13 @@ suite.addBatch
 
     'sets the given properties on the saved model instance': (err, person) ->
       assert.equal person.get('first_name'), 'Dylan'
-      assert.equal person.get('last_name'), 'Drannbauer'
+      assert.equal person.get('last_name'),  'Drannbauer'
 
     'sets the id property on the saved model instance': (err, person) ->
       assert.isNotNull person.get('id')
 
-    'sets the other properties on the saved model instance to null': (err, person) ->
-      assert.isNull person.get('middle_name')
+    'sets the default values for other properties on the saved model instance': (err, person) ->
+      assert.equal person.get('middle_name'), 'Stumpy'
       assert.isNull person.get('age')
 
     'leaves unknown properties of the saved model instance undefined': (err, person) ->
@@ -214,11 +222,11 @@ suite.addBatch
       assert.equal person.get('first_name'), 'Ducklan'
 
     'leaves other properties on the model instance unchanged': (err, person) ->
-      assert.equal person.get('last_name'), @.created.get('last_name')
-      assert.equal person.get('id'), @.created.get('id')
+      assert.equal person.get('last_name'),   @.created.get('last_name')
+      assert.equal person.get('middle_name'), @.created.get('middle_name')
+      assert.equal person.get('id'),          @.created.get('id')
 
     'leaves other properties on the updated model instance null': (err, person) ->
-      assert.isNull person.get('middle_name')
       assert.isNull person.get('age')
 
     'leaves unknown properties of the updated model instance undefined': (err, person) ->
@@ -427,8 +435,8 @@ suite.addBatch
     'sets the id property on the created model instance': (err, person) ->
       assert.isNotNull person.get('id')
 
-    'sets the other properties on the created model instance to null': (err, person) ->
-      assert.isNull person.get('middle_name')
+    'sets the default values for other properties on the created model instance': (err, person) ->
+      assert.equal person.get('middle_name'), 'Stumpy'
       assert.isNull person.get('age')
 
     'leaves unknown properties of the created model instance undefined': (err, person) ->
@@ -479,9 +487,9 @@ suite.addBatch
     'does not define the id property on the initialized model instance': (err, person) ->
       assert.isUndefined person.get('id')
 
-    'does not define other properties on the initialized model instance': (err, person) ->
-      assert.isUndefined person.get('middle_name')
-      assert.isUndefined person.get('age')
+    'sets the default values for other properties on the initialized model instance': (err, person) ->
+      assert.equal person.get('middle_name'), 'Stumpy'
+      assert.isNull person.get('age')
 
     'leaves unknown properties of the initialized model instance undefined': (err, person) ->
       assert.isUndefined person.get('blarg')

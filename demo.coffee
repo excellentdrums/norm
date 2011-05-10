@@ -196,4 +196,4 @@ allPeopleOlderThan3 = (err, people) ->
   Person.all olderOptions, (err, elders) ->
     say err, elders, 'Found all People older than 3'
 
-Norm.Model.connection.disconnect()
+Norm.Model.disconnect()
