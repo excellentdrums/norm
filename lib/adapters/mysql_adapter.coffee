@@ -1,5 +1,5 @@
 MySQL         = require 'mysql'
-PostgresNodes = require './postgres_nodes'
+Nodes         = require './nodes'
 EventEmitter  = require('events').EventEmitter
 
 class Statement
@@ -10,7 +10,7 @@ class Statement
 
 module.exports = class MySQLAdapter extends EventEmitter
   constructor: (params) ->
-    @nodes  = new PostgresNodes
+    @nodes  = new Nodes
     @client = new MySQL.Client(params)
 
     @on 'insert', (criteria, callback) =>

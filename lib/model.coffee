@@ -8,11 +8,11 @@ Fields        = require './fields'
 Attributes    = require './attributes'
 
 module.exports = class Model extends Mixable
-  @extend Queryable
+  @extend  Queryable
   @include Persistable
-  @extend Findable
-  @extend Connectable
-  @extend Fields
+  @extend  Findable
+  @extend  Connectable
+  @extend  Fields
   @include Attributes
 
   constructor: (attributes) ->

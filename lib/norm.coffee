@@ -1,10 +1,5 @@
-Model      = require './model'
-Adapters   = require './adapters'
-Criteria   = require './criteria'
-
-class Norm
-  @Model:    Model
-  @Adapters: Adapters
-  @Criteria: Criteria
-
-module.exports = Norm
+module.exports = class Norm
+  @Model:    require './model'
+  @Adapters: require './adapters'
+  @Criteria: require './criteria'
+  @Nodes:    require './adapters/nodes'

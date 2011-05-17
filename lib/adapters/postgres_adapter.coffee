@@ -1,5 +1,5 @@
 Postgres      = require 'pg'
-PostgresNodes = require './postgres_nodes'
+Nodes         = require './nodes'
 EventEmitter  = require('events').EventEmitter
 
 class Statement
@@ -8,9 +8,9 @@ class Statement
   toString: ->
     _(@parts).compact().join(' ') + ';'
 
-class PostgresAdapter extends EventEmitter
+module.exports = class PostgresAdapter extends EventEmitter
   constructor: (params) ->
-    @nodes  = new PostgresNodes
+    @nodes  = new Nodes
     @client = new Postgres.Client(params)
 
     @on 'insert', (criteria, callback) =>
@@ -76,5 +76,3 @@ class PostgresAdapter extends EventEmitter
       @nodes.deleteFrom criteria.tableName
       @nodes.where      criteria.options.where
     ).toString()
-
-module.exports = PostgresAdapter

@@ -164,7 +164,7 @@ suite.addBatch
         return
 
 .addBatch
-  'Model#save':
+  'Model#save a new model instance':
     topic: ->
       options =
         first_name: 'Dylan'
@@ -200,7 +200,47 @@ suite.addBatch
 
     teardown: ->
       Person.deleteAll (err, result) ->
-        assert.equal result, 1
+        return
+
+.addBatch
+  'Model#save an existing model instance':
+    topic: ->
+      options =
+        first_name: 'Dylan'
+        last_name:  'Drannbauer'
+
+      Person.create options, (err, person) =>
+        @.created = person
+        person.set( { middle_name: 'James' } )
+        person.save @.callback; return
+      return
+
+    'saves and returns a model instance': (err, person) ->
+      assert.instanceOf person, Person
+
+    'leaves unset properties on the saved model instance unchanged': (err, person) ->
+      assert.equal person.get('first_name'), 'Dylan'
+      assert.equal person.get('last_name'),  'Drannbauer'
+      assert.isNull person.get('age')
+
+    'sets new values for given properties on the saved model instance': (err, person) ->
+      assert.equal person.get('middle_name'), 'James'
+
+    'has the same id property after the model instance has been saved': (err, person) ->
+      assert.equal person.get('id'), @.created.get('id')
+
+    'leaves unknown properties of the saved model instance undefined': (err, person) ->
+      assert.isUndefined person.get('blarg')
+
+    'does not persist a new model instance':
+      topic: ->
+        Person.count @.callback; return
+      'and can be only one': (err, count) ->
+        assert.equal count, 1
+
+    teardown: ->
+      Person.deleteAll (err, result) ->
+        return
 
 .addBatch
   'Model#updateAttributes':

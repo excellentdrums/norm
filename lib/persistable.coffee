@@ -7,7 +7,6 @@ module.exports = class Persistable
       new @ attribute
 
     criteria = new Criteria @, {}, instances
-
     criteria.emit 'insert', (err, result) =>
       if result.rowCount > 1
         for index in [0..instances.length - 1]
@@ -27,10 +26,20 @@ module.exports = class Persistable
       callback err, result.rowCount
 
   save: (callback) ->
-    criteria = new Criteria @.constructor, {}, @
-    criteria.emit 'insert', (err, result) =>
-      @.set result.rows[0]
-      callback err, @
+    if @.isNew()
+      criteria = new Criteria @.constructor, {}, @
+      criteria.emit 'insert', (err, result) =>
+        @.set result.rows[0]
+        callback err, @
+    else if @.hasChanged()
+      criteria = new Criteria(@.constructor)
+                       .set(@.changedAttributes())
+                       .where( { id: @.get('id') } )
+      criteria.emit 'update', (err, result) =>
+        callback err, @
+    else
+      callback null, @
+
 
   updateAttributes: (attributes, callback) ->
     @.set attributes

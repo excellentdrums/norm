@@ -1,4 +1,4 @@
-module.exports = class PostgresNodes
+module.exports = class Nodes
   select: (fields) ->
     fields or= '*'
     'SELECT ' + fields
@@ -25,7 +25,7 @@ module.exports = class PostgresNodes
   insertInto: (tableName) ->
     'INSERT INTO ' + tableName
 
-  fields: (fields) ->
+  fields: (fields...) ->
     '(' + fields + ')'
 
   values: (values) ->
@@ -36,13 +36,13 @@ module.exports = class PostgresNodes
 
     'VALUES ' + rows
 
-  returning: (returning) ->
-    'RETURNING ' + returning if returning
+  returning: (returning...) ->
+    'RETURNING ' + returning if returning.length > 0
 
   deleteFrom: (tableName) ->
     'DELETE FROM ' + tableName
 
-  where: (criteria) ->
+  where: (conditions) ->
     operators =
       $eq:    ' = '
       $neq:   ' <> '
@@ -57,22 +57,29 @@ module.exports = class PostgresNodes
       $in:    ' IN '
       $nin:   ' NOT IN '
 
-    if criteria
-      conditions = _(criteria).chain()
+    if conditions
+      _conditions = _(conditions).chain()
         .keys()
         .map (key) ->
-          if typeof criteria[key] is 'object'
-            _(criteria[key]).chain()
+          if typeof conditions[key] is 'object'
+            _(conditions[key]).chain()
               .keys()
               .map (operator) ->
-                key + operators[operator] + "'" + criteria[key][operator] + "'"
+                _values = conditions[key][operator]
+                _values = if _values instanceof Array
+                  v = _(_values).map (_value) ->
+                    "'" + _value + "'"
+                  '(' + v + ')'
+                else
+                  if _values then "'" + _values + "'" else 'NULL'
+                key + operators[operator] + _values
               .join(' AND ')
               .value()
           else
-            key + '=' + "'" + criteria[key] + "'"
+            key + '=' + "'" + conditions[key] + "'"
         .join(' AND ')
         .value()
-      'WHERE ' + conditions
+      'WHERE ' + _conditions
 
   update: (tableName) ->
     'UPDATE ' + tableName
@@ -82,7 +89,7 @@ module.exports = class PostgresNodes
       setters = _(attributes).chain()
         .keys()
         .map (key) ->
-          key + "=" + "'" + attributes[key] + "'"
-        .join(',')
+          value = if attributes[key] then "'" + attributes[key] + "'" else 'NULL'
+          key + "=" + value
         .value()
       "SET " + setters
