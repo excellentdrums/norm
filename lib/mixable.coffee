@@ -6,4 +6,7 @@ module.exports = class Mixable
   @include: (mixin) ->
     for name, method of mixin.prototype
       @.prototype[name] = method
+
+  @mixin: (mixin) ->
+    @include mixin
     @extend mixin

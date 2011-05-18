@@ -2,7 +2,7 @@ Mixable    = require('../lib').Mixable
 Attributes = require('../lib').Attributes
 
 class Thing extends Mixable
-  @include Attributes
+  @mixin Attributes
   constructor: (@attributes = {}, @previousAttributes = {}) ->
 
 describe 'Attributes', ->

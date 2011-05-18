@@ -15,7 +15,7 @@ describe 'Norm.Connectable', ->
   Norm.Adapters.StubDBAdapter = StubDBAdapter
 
   class Thing extends Norm.Mixable
-    @extend Norm.Connectable
+    @mixin Norm.Connectable
 
   beforeEach ->
     @.addMatchers
