@@ -7,10 +7,7 @@ module.exports = class Connection extends EventEmitter
     @connected = false
 
   connect: ->
-    if @connected or @doConnect()
-      console.log 'Connected with ' + @adapter.constructor.name + '!'
-    else
-      console.log 'Connection Failed!'
+    @connected or @doConnect() or console.log 'Connection Failed!'
 
   disconnect: ->
     if @adapter.client.queryQueue.length is 0

@@ -6,11 +6,6 @@ class Thing extends Mixable
   constructor: (@attributes = {}, @previousAttributes = {}) ->
 
 describe 'Attributes', ->
-  beforeEach ->
-    @.addMatchers
-      toBeInstanceOf: (expected) ->
-        @.actual instanceof expected
-
   it 'sets attributes', ->
     thing = new Thing
     thing.set( { something: 'awesome' } )
