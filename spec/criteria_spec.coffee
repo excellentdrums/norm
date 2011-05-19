@@ -1,4 +1,4 @@
-Criteria = require('../lib').Criteria
+Norm = require('../lib')
 
 describe 'Criteria', ->
   beforeEach ->
@@ -6,7 +6,7 @@ describe 'Criteria', ->
       toBeInstanceOf: (expected) ->
         @.actual instanceof expected
 
-  criteria = new Criteria()
+  criteria = new Norm.Criteria()
                .excludes( { blarg: 'blarg' } )
                .excludes( { blurg: 'blurg' } )
                .only('title')
@@ -28,7 +28,7 @@ describe 'Criteria', ->
                .set( { tempurature: 'cold' } )
 
   it 'is a Criteria', ->
-    expect(criteria).toBeInstanceOf(Criteria)
+    expect(criteria).toBeInstanceOf(Norm.Criteria)
 
   it 'has where option', ->
     expect(criteria.options.where).toEqual( { this: 'that', me: 'Jim' } )

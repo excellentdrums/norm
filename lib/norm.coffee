@@ -7,3 +7,4 @@ module.exports = class Norm
   @Mixable:     require './mixable'
   @Connectable: require './connectable'
   @Connection:  require './connection'
+  @Fields:      require './fields'

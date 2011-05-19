@@ -1,8 +1,7 @@
-Mixable    = require('../lib').Mixable
-Attributes = require('../lib').Attributes
+Norm = require('../lib')
 
-class Thing extends Mixable
-  @mixin Attributes
+class Thing extends Norm.Mixable
+  @mixin Norm.Attributes
   constructor: (@attributes = {}, @previousAttributes = {}) ->
 
 describe 'Attributes', ->

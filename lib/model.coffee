@@ -17,9 +17,9 @@ module.exports = class Model extends Mixable
 
   constructor: (attributes) ->
     @tableName = @.constructor.tableName
-    @.attributes = {}
-    if @.constructor.defaults
-      @.set @.constructor.defaults
+    @attributes = {}
+    if @.constructor.defaultAttributes()
+      @.set @.constructor.defaultAttributes()
     @.set attributes
 
   @init: (attributes, callback) ->

@@ -1,15 +1,15 @@
-Nodes = require('../../lib').Nodes
+Norm = require('../../lib')
 
-describe 'Nodes', ->
+describe 'Norm.Nodes', ->
   beforeEach ->
     @.addMatchers
       toBeInstanceOf: (expected) ->
         @.actual instanceof expected
 
-  nodes = new Nodes
+  nodes = new Norm.Nodes
 
   it 'is Nodes', ->
-    expect(nodes).toBeInstanceOf(Nodes)
+    expect(nodes).toBeInstanceOf(Norm.Nodes)
 
   describe '#select', ->
     it 'defaults to *', ->
