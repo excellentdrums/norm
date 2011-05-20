@@ -1,6 +1,6 @@
 Criteria = require './criteria'
 
-class Findable
+module.exports = class Findable
   @find: (id, callback) ->
     criteria = @.where({id: id}).limit(1)
     criteria.emit 'select', (err, result) =>
@@ -76,5 +76,3 @@ class Findable
         @.init result.rows[0], callback
       else
         callback err, null
-
-module.exports = Findable
