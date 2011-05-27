@@ -8,3 +8,4 @@ module.exports = class Norm
   @Connectable: require './connectable'
   @Connection:  require './connection'
   @Fields:      require './fields'
+  @Findable:    require './findable'
