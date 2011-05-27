@@ -45,6 +45,9 @@ module.exports = class Findable
       callback err, result.rows[0].count
 
   @exists: (options, callback) ->
+    if typeof options is 'function'
+      callback = options
+      options  = {}
     criteria = new Criteria(@, options)
                      .only('id')
                      .limit(1)

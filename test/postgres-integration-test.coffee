@@ -419,7 +419,26 @@ suite.addBatch
         return
 
 .addBatch
-  'Model.exists when it does':
+  'Model.exists when it does with no options':
+    topic: ->
+      kyra =
+        first_name: 'Kyra'
+        last_name:  'Drannbauer'
+
+      Person.create kyra, (err, person) =>
+        @.kyra = person
+
+      Person.exists @.callback; return
+
+    'returns true': (err, result) ->
+      assert.isTrue result
+
+    teardown: ->
+      Person.deleteAll (err, result) ->
+        return
+
+.addBatch
+  'Model.exists when it does with options':
     topic: ->
       kyra =
         first_name: 'Kyra'
@@ -442,7 +461,19 @@ suite.addBatch
         return
 
 .addBatch
-  'Model.exists when it does not':
+  'Model.exists when it does not with no options':
+    topic: ->
+      Person.exists @.callback; return
+
+    'returns false': (err, result) ->
+      assert.isFalse result
+
+    teardown: ->
+      Person.deleteAll (err, result) ->
+        return
+
+.addBatch
+  'Model.exists when it does not with options':
     topic: ->
       options =
         where:
