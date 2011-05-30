@@ -1,0 +1,23 @@
+Thanks for stopping by. Not much to see here yet. It's getting there though.
+Still interested? Keep reading.
+
+What?
+Norm is an ORM for Node.js written in Coffescript.
+
+Why?
+I recently started a daily commute on the Long Island Railroad so I had some time
+to kill. Figured this was as good a way as any.
+
+What does Norm do?
+So far it just supports querying and persistence of objects. I found
+inspiration in Mongoid when designing the API. There is support for postgresql
+and mysql.
+
+What will Norm do eventually?
+Norm will include, at the very least, associations and validations. I've got
+very simple migrations in place for setting up the test environment so that
+might end up in the mix as well. Finally, what good would an ORM be if it didn't
+support a nice variety of databases? I'm gonna try and make that super easy to do.
+Once I finish this stuff, I box it up for npm and ship it.
+
+Wanna help? Let me know.
