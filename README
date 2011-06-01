@@ -2,7 +2,7 @@ Thanks for stopping by. Not much to see here yet. It's getting there though.
 Still interested? Keep reading.
 
 What?
-Norm is an ORM for Node.js written in CoffeScript.
+Norm is an ORM for Node.js written in CoffeeScript.
 
 Why?
 I recently started a daily commute on the Long Island Railroad so I had some time
@@ -24,4 +24,4 @@ Wanna help?
 Let me know.
 I love criticism. Keep it productive though, I'm sensitive. If it's not obvious
 from the code, I'm coming from Ruby and Rails. If I've violated some
-node.js/javascript/coffescript idiom or best practice tell me and I'll fix it.
+node.js/javascript/coffeescript idiom or best practice tell me and I'll fix it.
